@@ -11,7 +11,7 @@ def plot_tsne(data, labels):
     """
     n_components = 2
 
-    tsne = TSNE(n_components=n_components, init='pca', perplexity=40, random_state=0)
+    tsne = TSNE(n_components=n_components, init='pca', perplexity=5, random_state=0)
     tsne_res = tsne.fit_transform(data)
 
     v = pd.DataFrame(data,columns=[str(i) for i in range(data.shape[1])])
@@ -32,4 +32,22 @@ def plot_tsne(data, labels):
     plt.yticks([])
     plt.xlabel('')
     plt.ylabel('')
+    plt.show()
+
+def plot_confusion_matrix(matrix):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import pandas as pd
+
+    index = ['Email', 'Video', 'VideoCall', 'WebPage']
+
+    df_cm = pd.DataFrame(matrix, index=index, columns=index)
+
+    cmap = sns.cubehelix_palette(light=1, as_cmap=True)
+
+    res = sns.heatmap(df_cm, annot=True, vmin=0, vmax=20, cmap=cmap)
+
+    plt.yticks([0.5,1.5,2.5,3.5], index, va='center')
+
+    plt.title('Confusion Matrix')
     plt.show()

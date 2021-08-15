@@ -17,7 +17,7 @@ for subdirectory in sub_directories:
 
     for name in glob.glob('captures/' + subdirectory + '/*.pcapng'):
         t1 = time.perf_counter()
-        file = pyshark.FileCapture(name)
+        file = pyshark.FileCapture(name, use_json=True)
 
         lengths_upload = []
         lengths_download = []
@@ -49,7 +49,8 @@ for subdirectory in sub_directories:
                 continue
 
             relative_times.append(relative_time)
-            types.append(int(packet.wlan.fc_type))
+            # types.append(int(packet.wlan.fc_type))
+            types.append(int(packet.wlan.fc_tree.type))
 
             # if p == 500:
             #     break
@@ -104,4 +105,3 @@ y = np.array(total_labels)
 with open('dataset.npy', 'wb') as f:
     np.save(f, X)
     np.save(f, y)
-

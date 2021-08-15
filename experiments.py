@@ -1,13 +1,16 @@
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import confusion_matrix
+from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.model_selection import LeaveOneOut
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
 from sklearn.manifold import TSNE
 import numpy as np
 import matplotlib
-from utils import plot_tsne
+from utils import plot_tsne, plot_confusion_matrix
+import seaborn as sns
 
 # READ DATASET
 with open('dataset.npy', 'rb') as f:
@@ -25,11 +28,17 @@ with open('dataset.npy', 'rb') as f:
 accuracies = []
 cf_matrix = np.zeros([4, 4])
 loo = LeaveOneOut()
+
 for train_index, test_index in loo.split(X):
-    #clf = DecisionTreeClassifier(random_state=0)
-    clf = RandomForestClassifier(random_state=0)
-    clf.fit(X[train_index], y[train_index]) # per allenare l'albero
-    y_pred = clf.predict(X[test_index]) # predizione
+    # clf = DecisionTreeClassifier(random_state=0)
+    # clf = RandomForestClassifier(random_state=0)
+    #clf = GradientBoostingClassifier(random_state=0)
+    clf = MLPClassifier(random_state=0)
+    scaler = StandardScaler()
+    scaler.fit(X[train_index])
+
+    clf.fit(scaler.transform(X[train_index]), y[train_index]) # per allenare l'albero
+    y_pred = clf.predict(scaler.transform(X[test_index])) # predizione
     y_true = y[test_index]
     accuracy = accuracy_score(y_true, y_pred)
     accuracies.append(accuracy)
@@ -42,3 +51,4 @@ print('Accuracy:', np_accuracies.mean())
 print(cf_matrix)
 
 plot_tsne(X, y)
+plot_confusion_matrix(cf_matrix)
